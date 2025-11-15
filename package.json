@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-midterm",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev start",
+    "lint": "turbo lint"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "dependencies": {
+    "turbo": "^2.6.1"
+  },
+  "packageManager": "npm@10.0.0"
+}
