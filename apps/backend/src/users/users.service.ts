@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { type Drizzle, DRIZZLE } from '../db/db.provider';
-import { users } from '../db/schemas';
+import { usersTable } from '../db/schemas';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,15 +12,15 @@ export class UsersService {
   async findByEmail(email: string) {
     const [user] = await this.db
       .select()
-      .from(users)
-      .where(eq(users.email, email));
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
     return user;
   }
 
   async create(data: CreateUserDto) {
     const passwordHash = await bcrypt.hash(data.password, 10);
     const [user] = await this.db
-      .insert(users)
+      .insert(usersTable)
       .values({
         name: data.name,
         email: data.email,

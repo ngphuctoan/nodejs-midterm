@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, InternalServerErrorException, } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { users } from '../db/schemas';
+import { usersTable } from '../db/schemas';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
@@ -17,13 +17,9 @@ export class AuthService {
     if (existing) {
       throw new BadRequestException('Email already exists');
     }
-    try {
-      const user = await this.usersService.create(data);
-      const { passwordHash, ...result } = user;
-      return result;
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    const user = await this.usersService.create(data);
+    const { passwordHash, ...result } = user;
+    return result;
   }
 
   async validateUser(email: string, password: string) {
@@ -39,7 +35,7 @@ export class AuthService {
     return result;
   }
 
-  login(user: Omit<typeof users.$inferSelect, 'passwordHash'>) {
+  login(user: Omit<typeof usersTable.$inferSelect, 'passwordHash'>) {
     const payload = {
       sub: user.id,
       name: user.name,

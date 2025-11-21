@@ -1,8 +1,8 @@
 import 'express';
-import { users } from '../db/schemas';
+import { usersTable } from '../db/schemas';
 
 declare module 'express' {
   export interface Request {
-    user: Omit<typeof users.$inferSelect, 'passwordHash'>;
+    user: Omit<typeof usersTable.$inferSelect, 'passwordHash'>;
   }
 }

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { users } from './schemas';
+import { usersTable } from './schemas';
 import * as bcrypt from 'bcrypt';
 
 const USERS = [
@@ -22,7 +22,7 @@ const main = async () => {
     })),
   );
 
-  await db.insert(users).values(usersData);
+  await db.insert(usersTable).values(usersData);
 
   await client.end();
 };
