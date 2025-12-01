@@ -4,20 +4,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { customAlphabet } from 'nanoid';
 import { type Drizzle, DRIZZLE } from '../db/db.provider';
-import { recipesTable } from '../db/schemas';
-import { and, eq, sql } from 'drizzle-orm';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SUPABASE } from '../storage/storage.provider';
 import { SupabaseClient } from '@supabase/supabase-js';
-import slugify from 'slugify';
-import { customAlphabet } from 'nanoid';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { savedRecipesTable } from '../db/schemas';
+import { and, eq, sql } from 'drizzle-orm';
+import { CreateSavedRecipeDto } from './dto/create-saved-recipe.dto';
 import { RecipeInfo } from '../types/recipe-info';
+import { UpdateSavedRecipeDto } from './dto/update-saved-recipe.dto';
+import slugify from 'slugify';
 import sharp from 'sharp';
 
 @Injectable()
-export class RecipesService {
+export class SavedRecipesService {
   private readonly imageId = customAlphabet(
     '1234567890abcdefghijklmnopqrstuvwxyz',
     8,
@@ -29,46 +29,49 @@ export class RecipesService {
   ) {}
 
   async findAll(ownerId: number) {
-    const recipes = await this.db
+    const savedRecipes = await this.db
       .select()
-      .from(recipesTable)
-      .where(eq(recipesTable.ownerId, ownerId));
-    return recipes;
+      .from(savedRecipesTable)
+      .where(eq(savedRecipesTable.ownerId, ownerId));
+    return savedRecipes;
   }
 
   async findOne(ownerId: number, id: number) {
-    const [recipe] = await this.db
+    const [savedRecipe] = await this.db
       .select()
-      .from(recipesTable)
-      .where(and(eq(recipesTable.ownerId, ownerId), eq(recipesTable.id, id)));
-    if (!recipe) {
+      .from(savedRecipesTable)
+      .where(
+        and(
+          eq(savedRecipesTable.ownerId, ownerId),
+          eq(savedRecipesTable.id, id),
+        ),
+      );
+    if (!savedRecipe) {
       throw new NotFoundException();
     }
-    return recipe;
+    return savedRecipe;
   }
 
-  async create(ownerId: number, data: CreateRecipeDto) {
-    const reminder = data.reminder ? new Date(data.reminder) : undefined;
-    const [recipe] = await this.db
-      .insert(recipesTable)
+  async create(ownerId: number, data: CreateSavedRecipeDto) {
+    const [savedRecipe] = await this.db
+      .insert(savedRecipesTable)
       .values({
         ...data,
         ownerId,
-        reminder,
       })
       .returning();
-    return recipe;
+    return savedRecipe;
   }
 
   async getImage(ownerId: number, id: number, expirySeconds = 3_600) {
-    const recipe = await this.findOne(ownerId, id);
-    if (!recipe.info.image) {
+    const savedRecipe = await this.findOne(ownerId, id);
+    if (!savedRecipe.info.image) {
       return undefined;
     }
 
     const { data, error } = await this.supabase.storage
       .from(process.env.SUPABASE_BUCKET_NAME!)
-      .createSignedUrl(recipe.info.image, expirySeconds);
+      .createSignedUrl(savedRecipe.info.image, expirySeconds);
     if (error) {
       return undefined;
     }
@@ -76,21 +79,24 @@ export class RecipesService {
     return data.signedUrl;
   }
 
-  async update(ownerId: number, id: number, data: UpdateRecipeDto) {
+  async update(ownerId: number, id: number, data: UpdateSavedRecipeDto) {
     const info = data.info
       ? sql<RecipeInfo>`info || ${JSON.stringify(data.info)}`
       : undefined;
-    const reminder = data.reminder ? new Date(data.reminder) : undefined;
-    const [recipe] = await this.db
-      .update(recipesTable)
+    const [savedRecipe] = await this.db
+      .update(savedRecipesTable)
       .set({
         ...data,
         info,
-        reminder,
       })
-      .where(and(eq(recipesTable.ownerId, ownerId), eq(recipesTable.id, id)))
+      .where(
+        and(
+          eq(savedRecipesTable.ownerId, ownerId),
+          eq(savedRecipesTable.id, id),
+        ),
+      )
       .returning();
-    return recipe;
+    return savedRecipe;
   }
 
   async uploadImage(ownerId: number, id: number, image?: Express.Multer.File) {
@@ -120,14 +126,14 @@ export class RecipesService {
       throw new BadRequestException(error.message);
     }
 
-    const [recipe] = await this.db
-      .update(recipesTable)
+    const [savedRecipe] = await this.db
+      .update(savedRecipesTable)
       .set({
         info: sql`jsonb_set(info, {image}, ${data.path}::jsonb)`,
       })
-      .where(eq(recipesTable.id, id))
+      .where(eq(savedRecipesTable.id, id))
       .returning();
 
-    return recipe;
+    return savedRecipe;
   }
 }

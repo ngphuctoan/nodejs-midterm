@@ -10,5 +10,5 @@ export class CreateRecipeInfoDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }: { value?: string }) => value?.trim())
-  content: string;
+  content?: string;
 }

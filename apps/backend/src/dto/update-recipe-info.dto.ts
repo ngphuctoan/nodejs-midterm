@@ -6,10 +6,10 @@ export class UpdateRecipeInfoDto {
   @IsString()
   @Length(1, 255)
   @Transform(({ value }: { value?: string }) => value?.trim())
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
   @Transform(({ value }: { value?: string }) => value?.trim())
-  content: string;
+  content?: string;
 }

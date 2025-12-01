@@ -13,37 +13,40 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { RecipesService } from './recipes.service';
-import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { SavedRecipesService } from './saved-recipes.service';
+import type { Request } from 'express';
+import { CreateSavedRecipeDto } from './dto/create-saved-recipe.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { UpdateSavedRecipeDto } from './dto/update-saved-recipe.dto';
 
-@Controller('recipes')
+@Controller('saved-recipes')
 @UseGuards(JwtAuthGuard)
-export class RecipesController {
-  constructor(private readonly recipesService: RecipesService) {}
+export class SavedRecipesController {
+  constructor(private readonly savedRecipesService: SavedRecipesService) {}
 
   @Get()
   findAll(@Req() req: Request) {
-    return this.recipesService.findAll(req.user.id);
+    return this.savedRecipesService.findAll(req.user.id);
   }
 
   @Get(':id')
   findOne(@Req() req: Request, @Param('id') id: number) {
-    return this.recipesService.findOne(req.user.id, id);
+    return this.savedRecipesService.findOne(req.user.id, id);
   }
 
   @Get(':id/image')
   async getImage(@Req() req: Request, @Param('id') id: number) {
-    const signedUrl = await this.recipesService.getImage(req.user.id, id);
+    const signedUrl = await this.savedRecipesService.getImage(req.user.id, id);
     return signedUrl || 'https://placehold.co/300x300';
   }
 
   @Post()
-  create(@Req() req: Request, @Body() createRecipeDto: CreateRecipeDto) {
-    return this.recipesService.create(req.user.id, createRecipeDto);
+  create(
+    @Req() req: Request,
+    @Body() createSavedRecipeDto: CreateSavedRecipeDto,
+  ) {
+    return this.savedRecipesService.create(req.user.id, createSavedRecipeDto);
   }
 
   @Post(':id/image')
@@ -61,15 +64,19 @@ export class RecipesController {
     @Req() req: Request,
     @Param('id') id: number,
   ) {
-    return this.recipesService.uploadImage(req.user.id, id, image);
+    return this.savedRecipesService.uploadImage(req.user.id, id, image);
   }
 
   @Patch(':id')
   update(
     @Req() req: Request,
     @Param('id') id: number,
-    @Body() updateRecipeDto: UpdateRecipeDto,
+    @Body() updateSavedRecipeDto: UpdateSavedRecipeDto,
   ) {
-    return this.recipesService.update(req.user.id, id, updateRecipeDto);
+    return this.savedRecipesService.update(
+      req.user.id,
+      id,
+      updateSavedRecipeDto,
+    );
   }
 }

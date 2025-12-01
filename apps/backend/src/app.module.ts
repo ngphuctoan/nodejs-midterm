@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RecipesModule } from './recipes/recipes.module';
+import { SavedRecipesModule } from './saved-recipes/saved-recipes.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RecipesModule } from './recipes/recipes.module';
     UsersModule,
     AuthModule,
     RecipesModule,
+    SavedRecipesModule,
   ],
   controllers: [AppController],
   providers: [

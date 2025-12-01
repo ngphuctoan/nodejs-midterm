@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject(DRIZZLE) private db: Drizzle) {}
+  constructor(@Inject(DRIZZLE) private readonly db: Drizzle) {}
 
   async findByEmail(email: string) {
     const [user] = await this.db
