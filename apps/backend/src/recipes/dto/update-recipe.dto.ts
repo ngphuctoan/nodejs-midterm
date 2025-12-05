@@ -18,5 +18,5 @@ export class UpdateRecipeDto {
 
   @IsOptional()
   @IsBoolean()
-  isDone: boolean;
+  isDone?: boolean;
 }

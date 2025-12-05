@@ -5,16 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { customAlphabet } from 'nanoid';
-import { type Drizzle, DRIZZLE } from '../db/db.provider';
 import { SUPABASE } from '../storage/storage.provider';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { savedRecipesTable } from '../db/schemas';
-import { and, eq, sql } from 'drizzle-orm';
 import { CreateSavedRecipeDto } from './dto/create-saved-recipe.dto';
-import { RecipeInfo } from '../types/recipe-info';
 import { UpdateSavedRecipeDto } from './dto/update-saved-recipe.dto';
 import slugify from 'slugify';
 import sharp from 'sharp';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class SavedRecipesService {
@@ -24,28 +21,26 @@ export class SavedRecipesService {
   );
 
   constructor(
-    @Inject(DRIZZLE) private readonly db: Drizzle,
+    private readonly prisma: PrismaService,
     @Inject(SUPABASE) private readonly supabase: SupabaseClient,
   ) {}
 
   async findAll(ownerId: number) {
-    const savedRecipes = await this.db
-      .select()
-      .from(savedRecipesTable)
-      .where(eq(savedRecipesTable.ownerId, ownerId));
+    const savedRecipes = await this.prisma.saved_recipes.findMany({
+      where: {
+        owner_id: ownerId,
+      },
+    });
     return savedRecipes;
   }
 
   async findOne(ownerId: number, id: number) {
-    const [savedRecipe] = await this.db
-      .select()
-      .from(savedRecipesTable)
-      .where(
-        and(
-          eq(savedRecipesTable.ownerId, ownerId),
-          eq(savedRecipesTable.id, id),
-        ),
-      );
+    const savedRecipe = await this.prisma.saved_recipes.findUnique({
+      where: {
+        id,
+        owner_id: ownerId,
+      },
+    });
     if (!savedRecipe) {
       throw new NotFoundException();
     }
@@ -53,13 +48,12 @@ export class SavedRecipesService {
   }
 
   async create(ownerId: number, data: CreateSavedRecipeDto) {
-    const [savedRecipe] = await this.db
-      .insert(savedRecipesTable)
-      .values({
+    const savedRecipe = await this.prisma.saved_recipes.create({
+      data: {
         ...data,
-        ownerId,
-      })
-      .returning();
+        owner_id: ownerId,
+      },
+    });
     return savedRecipe;
   }
 
@@ -80,22 +74,20 @@ export class SavedRecipesService {
   }
 
   async update(ownerId: number, id: number, data: UpdateSavedRecipeDto) {
-    const info = data.info
-      ? sql<RecipeInfo>`info || ${JSON.stringify(data.info)}`
-      : undefined;
-    const [savedRecipe] = await this.db
-      .update(savedRecipesTable)
-      .set({
+    const existing = await this.findOne(ownerId, id);
+    const savedRecipe = await this.prisma.saved_recipes.update({
+      where: {
+        id,
+        owner_id: ownerId,
+      },
+      data: {
         ...data,
-        info,
-      })
-      .where(
-        and(
-          eq(savedRecipesTable.ownerId, ownerId),
-          eq(savedRecipesTable.id, id),
-        ),
-      )
-      .returning();
+        info: {
+          ...existing.info,
+          ...data.info,
+        },
+      },
+    });
     return savedRecipe;
   }
 
@@ -126,13 +118,18 @@ export class SavedRecipesService {
       throw new BadRequestException(error.message);
     }
 
-    const [savedRecipe] = await this.db
-      .update(savedRecipesTable)
-      .set({
-        info: sql`jsonb_set(info, {image}, ${data.path}::jsonb)`,
-      })
-      .where(eq(savedRecipesTable.id, id))
-      .returning();
+    const savedRecipe = await this.prisma.saved_recipes.update({
+      where: {
+        id,
+        owner_id: ownerId,
+      },
+      data: {
+        info: {
+          ...existing.info,
+          image: data.path,
+        },
+      },
+    });
 
     return savedRecipe;
   }

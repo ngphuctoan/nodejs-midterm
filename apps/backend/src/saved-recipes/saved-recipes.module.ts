@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DrizzleModule } from '../db/db.module';
 import { SupabaseModule } from '../storage/storage.module';
 import { SavedRecipesService } from './saved-recipes.service';
 import { SavedRecipesController } from './saved-recipes.controller';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
-  imports: [DrizzleModule, SupabaseModule],
-  providers: [SavedRecipesService],
+  imports: [SupabaseModule],
+  providers: [PrismaService, SavedRecipesService],
   controllers: [SavedRecipesController],
 })
 export class SavedRecipesModule {}

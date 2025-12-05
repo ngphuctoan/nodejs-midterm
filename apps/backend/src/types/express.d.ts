@@ -1,8 +1,10 @@
 import 'express';
-import { usersTable } from '../db/schemas';
+import { Prisma } from '../generated/prisma/client';
 
 declare module 'express' {
   export interface Request {
-    user: Omit<typeof usersTable.$inferSelect, 'passwordHash'>;
+    user: Prisma.usersGetPayload<{
+      select: { id: true; name: true; email: true };
+    }>;
   }
 }
