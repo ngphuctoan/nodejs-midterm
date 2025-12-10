@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getRecipes } from '../api/recipes';
-import RecipeCard from '../components/RecipeCard'; // Component riêng
+import { Link } from 'react-router-dom';
+// import RecipeCard from '../components/RecipeCard'; // Component riêng
 
 function RecipeListPage() {
   const [recipes, setRecipes] = useState([]);

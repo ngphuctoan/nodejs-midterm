@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getRecipeById } from '../api/recipes';
 import moment from 'moment';
+import api from '../api/api';
 
 function RecipeDetailPage() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const IMAGE_URL = `http://localhost:3000/api/recipes/${id}/image`; 
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
         const response = await getRecipeById(id);
         setRecipe(response.data);
+
+        const res = await api.get(`http://localhost:3000/recipes/${id}/image`);
+        setImageUrl(res.data);
       } catch (err) {
         setError('Không thể tải chi tiết công thức này.');
         console.error(err);
@@ -50,7 +53,7 @@ function RecipeDetailPage() {
 
       <div className="mb-8">
         <img 
-          src={IMAGE_URL} 
+          src={imageUrl} 
           alt={`Ảnh ${recipe.info.name}`} 
           onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }} 
           className="w-full h-80 object-cover rounded-lg shadow-lg"

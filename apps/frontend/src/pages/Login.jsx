@@ -1,30 +1,19 @@
-import React, {useState} from "react";
+import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { loginUser, getMe } from "../api/auth";
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const {login} = useAuth();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const response = await loginUser({email, password});
-            const token = response.data.token;
-
-            const userResponse = await getMe(token);
-            const userData = userResponse.data;
-
-
-            login(userData, token);
-
-
+            await login(email, password);
         } catch (error) {
             setError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
             console.log(error);
@@ -40,23 +29,23 @@ function LoginPage() {
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="email">Email</label>
                         <input
-                        type="email"
-                        id="email"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
+                            type="email"
+                            id="email"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
-                                </div>
-                                <div className="mb-6">
+                    </div>
+                    <div className="mb-6">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="password">Mật Khẩu</label>
                         <input
-                        type="password"
-                        id="password"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
+                            type="password"
+                            id="password"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <button
@@ -65,11 +54,11 @@ function LoginPage() {
                     >Đăng Nhập</button>
                 </form>
                 <p className="mt-6 text-center text-gray-600">
-          Chưa có tài khoản?{' '}
-          <Link to="/register" className="text-blue-500 hover:text-blue-700 font-medium">
-            Đăng ký ngay
-          </Link>
-        </p>
+                    Chưa có tài khoản?{' '}
+                    <Link to="/register" className="text-blue-500 hover:text-blue-700 font-medium">
+                        Đăng ký ngay
+                    </Link>
+                </p>
             </div>
         </div>
     )
