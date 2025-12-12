@@ -8,6 +8,9 @@ runs:
     - name: Install dependencies
       shell: bash
       run: npm install
+    - name: Symlink .env
+      shell: bash
+      run: ln -rs apps/backend/.env.test.local apps/backend/.env
     - name: Generate Prisma client
       shell: bash
       run: npx --workspace=backend -- prisma generate
