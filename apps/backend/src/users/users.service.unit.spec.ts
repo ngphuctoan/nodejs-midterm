@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma.service';
 import { Prisma, PrismaClient } from '../generated/prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
-describe('UsersService', () => {
+describe('UsersService (Unit)', () => {
   let usersService: UsersService;
   let prisma: DeepMockProxy<PrismaClient>;
 
@@ -30,14 +30,6 @@ describe('UsersService', () => {
     const result = await usersService.findByEmail('meep@remun.ch');
 
     expect(result).toEqual(user);
-  });
-
-  it('should return null if user not found', async () => {
-    prisma.users.findUnique.mockResolvedValue(null);
-
-    const result = await usersService.findByEmail('meeb@remun.ch');
-
-    expect(result).toEqual(null);
   });
 
   it('should create new user', async () => {

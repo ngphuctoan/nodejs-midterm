@@ -10,7 +10,7 @@ import { UpdateRecipeInfoDto } from '../../dto/update-recipe-info.dto';
 export class UpdateRecipeDto {
   @ValidateNested()
   @Type(() => UpdateRecipeInfoDto)
-  info: UpdateRecipeInfoDto;
+  info?: UpdateRecipeInfoDto;
 
   @IsOptional()
   @IsDateString()
@@ -18,5 +18,5 @@ export class UpdateRecipeDto {
 
   @IsOptional()
   @IsBoolean()
-  isDone?: boolean;
+  is_done?: boolean;
 }

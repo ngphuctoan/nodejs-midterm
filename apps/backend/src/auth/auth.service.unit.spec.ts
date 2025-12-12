@@ -6,7 +6,7 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { Prisma } from '../generated/prisma/client';
 import bcrypt from 'bcrypt';
 
-describe('AuthService', () => {
+describe('AuthService (Unit)', () => {
   let authService: AuthService;
   let usersService: DeepMockProxy<UsersService>;
   let jwtService: DeepMockProxy<JwtService>;

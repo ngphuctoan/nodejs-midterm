@@ -137,4 +137,14 @@ export class RecipesService {
 
     return recipe;
   }
+
+  async delete(ownerId: number, id: number) {
+    const recipe = await this.prisma.recipes.delete({
+      where: {
+        id,
+        owner_id: ownerId,
+      },
+    });
+    return recipe;
+  }
 }

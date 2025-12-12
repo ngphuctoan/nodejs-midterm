@@ -7,7 +7,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import sharp from 'sharp';
 
-describe('RecipesService', () => {
+describe('RecipesService (Unit)', () => {
   let recipesService: RecipesService;
   let prisma: DeepMockProxy<PrismaClient>;
   let supabase: DeepMockProxy<SupabaseClient>;
@@ -215,5 +215,14 @@ describe('RecipesService', () => {
         mimetype: 'image/jpeg',
       } as Express.Multer.File),
     ).rejects.toThrow('sorry server exploded');
+  });
+
+  it('should delete a recipe', async () => {
+    const recipe = { info: { name: 'Com tam' } } as Prisma.recipesModel;
+    prisma.recipes.delete.mockResolvedValue(recipe);
+
+    const result = await recipesService.delete(1, 1);
+
+    expect(result).toEqual(recipe);
   });
 });

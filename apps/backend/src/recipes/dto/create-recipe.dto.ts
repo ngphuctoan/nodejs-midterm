@@ -20,5 +20,5 @@ export class CreateRecipeDto {
 
   @IsOptional()
   @IsBoolean()
-  isDone?: boolean;
+  is_done?: boolean;
 }

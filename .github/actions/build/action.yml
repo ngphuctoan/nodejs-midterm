@@ -8,3 +8,6 @@ runs:
     - name: Install dependencies
       shell: bash
       run: npm install
+    - name: Generate Prisma client
+      shell: bash
+      run: npx --workspace=backend -- prisma generate

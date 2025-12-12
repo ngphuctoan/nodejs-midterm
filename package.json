@@ -10,8 +10,6 @@
     "apps/*"
   ],
   "dependencies": {
-    "@prisma/adapter-pg": "^7.1.0",
-    "@prisma/client": "^7.1.0",
     "turbo": "^2.6.1"
   },
   "packageManager": "npm@10.0.0"

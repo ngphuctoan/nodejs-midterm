@@ -42,7 +42,7 @@ export class SavedRecipesService {
       },
     });
     if (!savedRecipe) {
-      throw new NotFoundException();
+      throw new NotFoundException('Saved recipe not found');
     }
     return savedRecipe;
   }
@@ -131,6 +131,16 @@ export class SavedRecipesService {
       },
     });
 
+    return savedRecipe;
+  }
+
+  async delete(ownerId: number, id: number) {
+    const savedRecipe = await this.prisma.saved_recipes.delete({
+      where: {
+        id,
+        owner_id: ownerId,
+      },
+    });
     return savedRecipe;
   }
 }
