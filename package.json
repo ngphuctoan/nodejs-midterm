@@ -2,8 +2,9 @@
   "name": "nodejs-midterm",
   "private": true,
   "scripts": {
-    "dev": "turbo dev start",
-    "lint": "turbo lint"
+    "dev": "turbo dev start:dev",
+    "lint": "turbo lint",
+    "test": "turbo test"
   },
   "workspaces": [
     "apps/*"

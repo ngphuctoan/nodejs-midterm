@@ -1,0 +1,8 @@
+name: 'Docker-Compose Setup'
+description: 'Sets up docker-compose'
+runs:
+  using: 'composite'
+  steps:
+    - name: Start Postgres test server
+      shell: bash
+      run: docker compose up -d --wait

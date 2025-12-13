@@ -1,0 +1,22 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  unit-int-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/docker-compose
+      - uses: ./.github/actions/build
+
+      - name: Run unit + int tests
+        run: npm run test --workspace=backend
+
+      - name: Run e2e tests
+        run: npm run test:e2e --workspace=backend
+
+      - run: docker compose down -v
+        if: always()

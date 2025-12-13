@@ -1,0 +1,47 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = ""
+}
+
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model recipes {
+  id         Int       @id @default(autoincrement())
+  /// [RecipeInfo]
+  info       Json
+  owner_id   Int
+  reminder   DateTime? @db.Timestamp(6)
+  is_done    Boolean   @default(false)
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  users      users     @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "recipes_owner_id_users_id_fk")
+}
+
+model saved_recipes {
+  id         Int      @id @default(autoincrement())
+  /// [RecipeInfo]
+  info       Json
+  owner_id   Int
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "saved_recipes_owner_id_users_id_fk")
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  email         String          @unique(map: "users_email_unique") @db.VarChar(255)
+  password_hash String          @db.VarChar(255)
+  created_at    DateTime        @default(now()) @db.Timestamp(6)
+  updated_at    DateTime        @default(now()) @db.Timestamp(6)
+  recipes       recipes[]
+  saved_recipes saved_recipes[]
+}
