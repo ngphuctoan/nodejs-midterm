@@ -128,15 +128,18 @@ describe('RecipesService (Unit)', () => {
 
   it('should update existing recipe', async () => {
     const recipe = {
-      info: { name: 'Com suon' },
+      info: { name: 'Com tam' },
+      is_done: false,
     } as Prisma.recipesModel;
     prisma.recipes.update.mockResolvedValue(recipe);
     prisma.recipes.findUnique.mockResolvedValue({
       info: { name: 'Com tam' },
+      is_done: true,
     } as Prisma.recipesModel);
 
     const result = await recipesService.update(1, 1, {
       info: { name: 'Com suon' },
+      is_done: true,
     });
 
     expect(result).toEqual(recipe);

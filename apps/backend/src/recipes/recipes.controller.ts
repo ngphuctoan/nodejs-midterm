@@ -12,6 +12,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import type { Request } from 'express';
@@ -31,12 +33,12 @@ export class RecipesController {
   }
 
   @Get(':id')
-  findOne(@Req() req: Request, @Param('id') id: number) {
+  findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     return this.recipesService.findOne(req.user.id, id);
   }
 
   @Get(':id/image')
-  async getImage(@Req() req: Request, @Param('id') id: number) {
+  async getImage(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const signedUrl = await this.recipesService.getImage(req.user.id, id);
     return signedUrl || 'https://placehold.co/300x300';
   }
@@ -59,7 +61,7 @@ export class RecipesController {
     )
     image: Express.Multer.File,
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return this.recipesService.uploadImage(req.user.id, id, image);
   }
@@ -67,9 +69,14 @@ export class RecipesController {
   @Patch(':id')
   update(
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateRecipeDto: UpdateRecipeDto,
   ) {
     return this.recipesService.update(req.user.id, id, updateRecipeDto);
+  }
+
+  @Delete(':id')
+  delete(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    return this.recipesService.delete(req.user.id, id);
   }
 }

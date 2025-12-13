@@ -12,6 +12,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SavedRecipesService } from './saved-recipes.service';
@@ -31,12 +33,12 @@ export class SavedRecipesController {
   }
 
   @Get(':id')
-  findOne(@Req() req: Request, @Param('id') id: number) {
+  findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     return this.savedRecipesService.findOne(req.user.id, id);
   }
 
   @Get(':id/image')
-  async getImage(@Req() req: Request, @Param('id') id: number) {
+  async getImage(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const signedUrl = await this.savedRecipesService.getImage(req.user.id, id);
     return signedUrl || 'https://placehold.co/300x300';
   }
@@ -62,7 +64,7 @@ export class SavedRecipesController {
     )
     image: Express.Multer.File,
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return this.savedRecipesService.uploadImage(req.user.id, id, image);
   }
@@ -70,7 +72,7 @@ export class SavedRecipesController {
   @Patch(':id')
   update(
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateSavedRecipeDto: UpdateSavedRecipeDto,
   ) {
     return this.savedRecipesService.update(
@@ -78,5 +80,10 @@ export class SavedRecipesController {
       id,
       updateSavedRecipeDto,
     );
+  }
+
+  @Delete(':id')
+  delete(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    return this.savedRecipesService.delete(req.user.id, id);
   }
 }

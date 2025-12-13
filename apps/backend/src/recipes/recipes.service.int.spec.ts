@@ -124,7 +124,10 @@ describe('RecipesService (Integration)', () => {
       is_done: true,
     });
 
-    expect(result.is_done).toBeTruthy();
+    expect(result).toMatchObject({
+      info: { name: 'Com tam' },
+      is_done: true,
+    });
   });
 
   it('should upload an image', async () => {
