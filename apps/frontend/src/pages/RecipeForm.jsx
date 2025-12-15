@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { createRecipe, getRecipeById, updateRecipe, uploadRecipeImage } from '../api/recipes';
-import moment from 'moment'; 
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {createRecipe, getRecipeById, updateRecipe, uploadRecipeImage} from '../api/recipes';
+import moment from 'moment';
 
 function RecipeFormPage() {
   const { id } = useParams();  
@@ -11,7 +11,7 @@ function RecipeFormPage() {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [reminder, setReminder] = useState('');
-  const [isDone, setIsDone] = useState(false);
+  const [is_done, setIsDone] = useState(false);
   const [imageFile, setImageFile] = useState(null);
 
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ function RecipeFormPage() {
           const recipe = response.data;
           setName(recipe.info.name || '');
           setContent(recipe.info.content || '');
-          setIsDone(recipe.isDone || false);
+          setIsDone(recipe.is_done || false);
           if (recipe.reminder) {
             setReminder(moment(recipe.reminder).format('YYYY-MM-DDTHH:mm'));
           }
@@ -45,7 +45,7 @@ function RecipeFormPage() {
 
     const recipeData = {
       info: { name, content },
-      isDone,
+      is_done,
     };
     if (reminder) {
       recipeData.reminder = moment(reminder).toISOString(); 
@@ -124,12 +124,12 @@ function RecipeFormPage() {
         <div className="mb-4 flex items-center">
             <input
                 type="checkbox"
-                id="isDone"
-                checked={isDone}
+                id="is_done"
+                checked={is_done}
                 onChange={(e) => setIsDone(e.target.checked)}
                 className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label className="ml-3 text-gray-700 font-medium" htmlFor="isDone">Đã hoàn thành</label>
+            <label className="ml-3 text-gray-700 font-medium" htmlFor="is_done">Đã hoàn thành</label>
         </div>
 
         <div className="mb-6">

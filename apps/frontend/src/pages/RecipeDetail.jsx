@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { getRecipeById } from '../api/recipes';
+import {useEffect, useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
+import {getRecipeById} from '../api/recipes';
 import moment from 'moment';
 import api from '../api/api';
 
@@ -40,8 +40,8 @@ function RecipeDetailPage() {
       
       {/* Trạng thái và Nhắc nhở */}
       <div className="flex items-center space-x-4 mb-6">
-        <span className={`px-4 py-1.5 text-md font-semibold rounded-full ${recipe.isDone ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-          {recipe.isDone ? 'Đã Hoàn Thành' : 'Đang Thực Hiện'}
+        <span className={`px-4 py-1.5 text-md font-semibold rounded-full ${recipe.is_done ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+          {recipe.is_done ? 'Đã Hoàn Thành' : 'Đang Thực Hiện'}
         </span>
         {recipe.reminder && (
           <span className="text-gray-600 flex items-center">

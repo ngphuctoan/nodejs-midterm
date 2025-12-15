@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { getRecipes } from '../api/recipes';
-import { Link } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {getRecipes} from '../api/recipes';
+import {Link} from 'react-router-dom';
+
 // import RecipeCard from '../components/RecipeCard'; // Component riêng
 
 function RecipeListPage() {
@@ -34,9 +35,11 @@ function RecipeListPage() {
         {recipes.length > 0 ? (
           recipes.map((recipe) => (
             <div key={recipe.id} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+              <h3 className="font-bold text-xl mb-4">{recipe.info?.name}</h3>
+              <p>{recipe.info?.content}</p>
               <div className="mt-4 flex justify-between items-center">
-                <span className={`px-3 py-1 text-sm font-medium rounded-full ${recipe.isDone ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                  {recipe.isDone ? 'Hoàn thành' : 'Chưa xong'}
+                <span className={`px-3 py-1 text-sm font-medium rounded-full ${recipe.is_done ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {recipe.is_done ? 'Hoàn thành' : 'Chưa xong'}
                 </span>
                 <Link to={`/recipes/${recipe.id}`} className="text-blue-500 hover:text-blue-700 font-medium">Chi tiết →</Link> 
               </div>
@@ -46,7 +49,7 @@ function RecipeListPage() {
           <p className="text-gray-500 col-span-full">Bạn chưa có công thức nào. Hãy thêm một công thức mới!</p>
         )}
       </div>
-      <button className="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition duration-300 text-xl font-bold">
+      <button className="fixed bottom-8 right-8 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition duration-300 text-3xl font-bold size-[56px]">
         +
       </button>
     </div>
